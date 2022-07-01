@@ -18,7 +18,7 @@ public class ConnectionPool {
     private String user;
     private String password;
     private String driverDB;
-    private Properties properties = getProperties("db.properties");
+    private Properties properties = getProperties("database.properties");
     private final int maxConnection = Integer.parseInt(properties.getProperty("maxConnection"));
     private static volatile ConnectionPool instance = null;
     private BlockingQueue<Connection> freeConnections = new ArrayBlockingQueue<>(maxConnection);

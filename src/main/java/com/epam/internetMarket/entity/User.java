@@ -18,52 +18,6 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(String firstName, String lastName, Date birthday, String phoneNumber, String address, String password, String username) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.birthday = birthday;
-        this.phoneNumber = phoneNumber;
-        this.address = address;
-        this.password = password;
-        this.username = username;
-    }
-
-    public User(String firstName, String lastName, Date birthday, String phoneNumber, String address, String password, boolean isAdmin, long statusId, String username) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.birthday = birthday;
-        this.phoneNumber = phoneNumber;
-        this.address = address;
-        this.password = password;
-        this.isAdmin = isAdmin;
-        this.statusId = statusId;
-        this.username = username;
-    }
-
-    public User(long id, String firstName, String lastName, Date birthday, String phoneNumber, String address, long statusId, String username) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.birthday = birthday;
-        this.phoneNumber = phoneNumber;
-        this.address = address;
-        this.statusId = statusId;
-        this.username = username;
-    }
-
-    public User(long id, String firstName, String lastName, Date birthday, String phoneNumber, String address, String password, boolean isAdmin, long statusId, String username) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.birthday = birthday;
-        this.phoneNumber = phoneNumber;
-        this.address = address;
-        this.password = password;
-        this.isAdmin = isAdmin;
-        this.statusId = statusId;
-        this.username = username;
-    }
-
     public long getId() {
         return id;
     }

@@ -10,7 +10,6 @@ public class ParameterConstants {
     public static final String BIRTHDAY = "birthday";
     public static final String PHONE_NUMBER = "phoneNumber";
     public static final String ADDRESS = "address";
-    public static final String IS_ADMIN = "isAdmin";
     public static final String STATUS_ID = "statusId";
     public static final String USER_CART = "userCart";
     public static final String USER_ORDERS = "userOrders";
@@ -65,8 +64,4 @@ public class ParameterConstants {
     public static final String ORDER_STATUS_UPDATING = "successOrderUpdate";
     public static final int MINIMUM_NUMBER_ASCII_VALUE = 48;
     public static final int MAXIMUM_NUMBER_ASCII_VALUE = 57;
-
-    public long getInitialStatusId() {
-        return INITIAL_STATUS_ID;
-    }
 }
