@@ -15,6 +15,8 @@
 
     >путь к скрипту: *files/internet_market.sql*
 3. Скачайте Apache Tomcat и подключите к проекту:
+    >Apache Tomcat 8.5.77: https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.77/bin/apache-tomcat-8.5.77.zip
+
     >Run -> Edit Configurations... -> Add New Configuration ("+") -> Tomcat server -> local
 4. Указываем путь к папке с Tomcat, указываем JDK и добавляем артефакт: 
     >Deployment -> Add ('+') -> Artifact
