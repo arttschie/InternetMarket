@@ -1,16 +1,16 @@
-#InternetMarket
+# InternetMarket
 ![alt text](files/databaseScheme.png)
 
-#####Учетные записи:
+##### Учетные записи:
 |         | Пользователь  | Админ         |
 |---------|:-------------:|:-------------:| 
 |username:|`user`         |`admin`        |
 |password:|`user1111`     |`admin1111`    |
 
-#####Для развертки понадобятся:
+##### Для развертки понадобятся:
 *Apache Tomcat 8.5.77 + PostgreSQL 10.20 + JDK-11*
 
-#####Порядок развертки:
+##### Порядок развертки:
 1. Клонируем репозиторий с гитхаба в IDE по ссылке (для IDEA):
     >File -> New -> Project from VersionControl -> URL: https://github.com/arttschie/InternetMarket.git 
 2. Создайте свою базу данных и выполните sql скрипт:
