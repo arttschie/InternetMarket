@@ -1,6 +1,6 @@
 # InternetMarket
 ![alt text](files/databaseScheme.png)
-##### Учетные записи:
+#### Учетные записи:
 |         | Пользователь  | Админ         |
 |---------|:-------------:|:-------------:| 
 |username:|`user`         |`admin`        |
