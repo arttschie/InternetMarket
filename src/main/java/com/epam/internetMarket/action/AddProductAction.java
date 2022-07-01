@@ -35,6 +35,7 @@ public class AddProductAction implements Action{
             product.setDescription(request.getParameter(PRODUCT_DESCRIPTION));
             product.setImageUrl(request.getParameter(PRODUCT_IMAGE_URL));
             productDao.addProduct(product);
+            request.setAttribute(PRODUCT_ADDITION, POSITIVE);
         }
         request.getRequestDispatcher(ADD_PRODUCT_PAGE).forward(request, response);
     }

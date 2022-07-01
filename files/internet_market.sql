@@ -1,22 +1,22 @@
-CREATE DATABASE IF NOT EXISTS postgres;
+CREATE SEQUENCE "public".product_category_id_seq START WITH 50 INCREMENT BY 1;
 
-CREATE SEQUENCE "public".basket_id_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE "public".cart_id_seq START WITH 1 INCREMENT BY 1;
 
-CREATE SEQUENCE "public".locale_id_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE "public".locale_id_seq START WITH 5 INCREMENT BY 1;
 
 CREATE SEQUENCE "public".order_detail_id_seq START WITH 1 INCREMENT BY 1;
 
 CREATE SEQUENCE "public".order_id_seq START WITH 1 INCREMENT BY 1;
 
-CREATE SEQUENCE "public".product_category_locale_id_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE "public".product_category_locale_id_seq START WITH 100 INCREMENT BY 1;
 
-CREATE SEQUENCE "public".product_id_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE "public".product_id_seq START WITH 100 INCREMENT BY 1;
 
 CREATE SEQUENCE "public".status_id_seq START WITH 1 INCREMENT BY 1;
 
-CREATE SEQUENCE "public".status_locale_id_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE "public".status_locale_id_seq START WITH 50 INCREMENT BY 1;
 
-CREATE SEQUENCE "public".user_id_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE "public".user_id_seq START WITH 10 INCREMENT BY 1;
 
 CREATE  TABLE "public".locale ( 
 	id                   integer DEFAULT nextval('locale_id_seq'::regclass) NOT NULL  ,
@@ -89,7 +89,7 @@ CREATE  TABLE "public".product (
  );
 
 CREATE  TABLE "public".cart ( 
-	id                   integer DEFAULT nextval('basket_id_seq'::regclass) NOT NULL  ,
+	id                   integer DEFAULT nextval('cart_id_seq'::regclass) NOT NULL  ,
 	user_id              integer  NOT NULL  ,
 	product_id           integer  NOT NULL  ,
 	"count"              integer    ,
@@ -107,7 +107,7 @@ CREATE  TABLE "public".order_detail (
 
 ALTER TABLE "public".cart ADD CONSTRAINT cart_product FOREIGN KEY ( product_id ) REFERENCES "public".product( id );
 
-ALTER TABLE "public".cart ADD CONSTRAINT basket_user FOREIGN KEY ( user_id ) REFERENCES "public"."user"( id );
+ALTER TABLE "public".cart ADD CONSTRAINT cart_user FOREIGN KEY ( user_id ) REFERENCES "public"."user"( id );
 
 ALTER TABLE "public"."order" ADD CONSTRAINT order_status FOREIGN KEY ( status_id ) REFERENCES "public".status( id );
 
