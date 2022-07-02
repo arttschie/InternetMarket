@@ -4,7 +4,6 @@ import com.epam.internetMarket.dao.UserDao;
 import com.epam.internetMarket.dao.impl.UserDaoImpl;
 import com.epam.internetMarket.entity.User;
 import com.epam.internetMarket.util.validators.ProfileValidator;
-import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +20,6 @@ import static com.epam.internetMarket.util.constants.PageConstants.*;
 public class EditProfileAction implements Action {
     private final UserDao userDao = new UserDaoImpl();
     private final ProfileValidator validator = new ProfileValidator();
-    private final Logger log = Logger.getLogger(this.getClass().getName());
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException, SQLException {
@@ -31,7 +29,6 @@ public class EditProfileAction implements Action {
 
         if (!validator.isValid(request, response)) {
             request.setAttribute(PROFILE_UPDATING, NEGATIVE);
-            log.info("Edit profile 1");
         } else {
             user = new User();
             user.setId(Long.parseLong(request.getParameter(USER_ID)));
@@ -43,7 +40,6 @@ public class EditProfileAction implements Action {
             user.setStatusId(INITIAL_STATUS_ID);
             userDao.updateUser(user);
             request.setAttribute(PROFILE_UPDATING, POSITIVE);
-            log.info("Edit profile 2");
         }
 
         if (request.getParameter(PAGE_NAME).equals(EDIT_PROFILE_PAGE)){

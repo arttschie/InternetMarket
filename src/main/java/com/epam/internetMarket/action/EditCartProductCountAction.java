@@ -8,7 +8,6 @@ import com.epam.internetMarket.entity.Cart;
 import com.epam.internetMarket.entity.Product;
 import com.epam.internetMarket.entity.User;
 import com.epam.internetMarket.util.validators.CartValidator;
-import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +22,6 @@ import static com.epam.internetMarket.util.validators.NumberParameterValidator.i
 import static com.epam.internetMarket.util.constants.ParameterConstants.*;
 
 public class EditCartProductCountAction implements Action{
-    private final Logger log = Logger.getLogger(this.getClass().getName());
     private final CartDao cartDao = new CartDaoImpl();
     private final ProductDao productDao = new ProductDaoImpl();
     private final CartValidator validator = new CartValidator();
@@ -34,10 +32,8 @@ public class EditCartProductCountAction implements Action{
 
         if (!(isNumberParameterValid(request.getParameter(CART_COUNT)))) {
             request.setAttribute(CART_UPDATING, NEGATIVE);
-            log.info("1");
         } else if (!(validator.isValid(request, response))) {
             request.setAttribute(CART_UPDATING, NEGATIVE);
-            log.info("2");
         } else {
             int productCount = Integer.parseInt(request.getParameter(CART_COUNT));
             Product product = productDao.getProductById(Long.parseLong(request.getParameter(PRODUCT_ID)));
@@ -45,7 +41,6 @@ public class EditCartProductCountAction implements Action{
 
             if (!(productCount > 0 && productCount <= productDao.getProductCount(product.getId()))) {
                 request.setAttribute(CART_UPDATING, NEGATIVE);
-                log.info("3");
             } else {
                 Cart cart = new Cart();
                 cart.setUserId(user.getId());
