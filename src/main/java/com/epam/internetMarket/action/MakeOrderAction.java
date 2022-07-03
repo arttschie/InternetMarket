@@ -40,6 +40,12 @@ public class MakeOrderAction implements Action {
         User user = (User) session.getAttribute(LOGGED_USER);
         List<Cart> userCartProducts = cartDao.getCartProducts(user.getId());
 
+        if (userCartProducts == null || userCartProducts.size() == 0) {
+            request.setAttribute(ORDER_COMPLETION, NEGATIVE);
+            request.getRequestDispatcher(PROFILE_PAGE).forward(request, response);
+            return;
+        }
+
         for (Cart cartProduct: userCartProducts) {
             if (cartProduct.getCount() > productDao.getProductCount(cartProduct.getProductId())) {
                 request.setAttribute(ORDER_COMPLETION, NEGATIVE);

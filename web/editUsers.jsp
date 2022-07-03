@@ -46,12 +46,23 @@
         </c:forEach>
         </tbody>
     </table>
-    <c:if test="${requestScope.successPasswordEdit == 'yes'}">
-        <p><a class="text-success"><fmt:message key="editUsers.passwordEdited"/></a></p>
-    </c:if>
-    <c:if test="${requestScope.successPasswordEdit == 'no'}">
-        <p><a class="text-success"><fmt:message key="parameters.passwordNotMatch"/></a></p>
-    </c:if>
+    <c:choose>
+        <c:when test="${requestScope.successPasswordEdit == 'parameters.fillAllFields'}">
+            <p><a class="text-danger"><fmt:message key="parameters.fillAllFields"/></a></p>
+        </c:when>
+        <c:when test="${requestScope.successPasswordEdit == 'parameters.wrongCredentials'}">
+            <p><a class="text-danger"><fmt:message key="parameters.wrongCredentials"/></a></p>
+        </c:when>
+        <c:when test="${requestScope.successPasswordEdit == 'parameters.passwordNotMatch'}">
+            <p><a class="text-danger"><fmt:message key="parameters.passwordNotMatch"/></a></p>
+        </c:when>
+        <c:when test="${requestScope.successPasswordEdit == 'yes'}">
+            <p><a class="text-success"><fmt:message key="parameters.passwordUpdated"/></a></p>
+        </c:when>
+        <c:otherwise>
+            <p><a class="text-danger"><fmt:message key="editUsers.doAction"/></a></p>
+        </c:otherwise>
+    </c:choose>
 </div>
 <div style="padding: 25px">
     <h5 class="mb-1"><fmt:message key="editUsers.editProfile"/></h5>
@@ -65,6 +76,7 @@
             <th scope="col"><fmt:message key="editUsers.phoneNumber"/></th>
             <th scope="col"><fmt:message key="editUsers.address"/></th>
             <th scope="col"><fmt:message key="editUsers.status"/></th>
+            <th scope="col"><fmt:message key="editUsers.editStatus"/></th>
             <th scope="col"><fmt:message key="editUsers.edit"/></th>
         </tr>
         </thead>
@@ -78,6 +90,7 @@
                     <td>${user.birthday}<br><input type="date" name="birthday" required></td>
                     <td>${user.phoneNumber}<br><input type="text" name="phoneNumber" required></td>
                     <td>${user.address}<br><input type="text" name="address" required></td>
+                    <td>${userDao.getUserStatusName(user, sessionScope.webLocaleId)}<br></td>
                     <td>
                         <select class="form-control" name="statusId" required>
                             <option value="1"><fmt:message key="editUsers.active"/></option>
@@ -125,18 +138,23 @@
         </c:forEach>
         </tbody>
     </table>
-    <c:if test="${requestScope.successProfileEdit == 'yes'}">
-        <p><a class="text-success"><fmt:message key="editUsers.profileEdited"/></a></p>
-    </c:if>
-    <c:if test="${requestScope.successProfileEdit == 'no'}">
-        <p><a class="text-danger"><fmt:message key="editUsers.profileError"/></a></p>
-    </c:if>
-    <c:if test="${requestScope.successOrderUpdate == 'yes'}">
-        <p><a class="text-success"><fmt:message key="editUsers.statusUpdated"/></a></p>
-    </c:if>
-    <c:if test="${requestScope.successOrderUpdate == 'no'}">
-        <p><a class="text-danger"><fmt:message key="editUsers.statusUpdatedError"/></a></p>
-    </c:if>
+    <c:choose>
+        <c:when test="${requestScope.successOrderUpdate == 'yes'}">
+            <p><a class="text-success"><fmt:message key="editUsers.statusUpdated"/></a></p>
+        </c:when>
+        <c:when test="${requestScope.successOrderUpdate == 'no'}">
+            <p><a class="text-danger"><fmt:message key="editUsers.statusUpdatedError"/></a></p>
+        </c:when>
+        <c:when test="${requestScope.successProfileEdit == 'yes'}">
+            <p><a class="text-success"><fmt:message key="editUsers.profileEdited"/></a></p>
+        </c:when>
+        <c:when test="${requestScope.successProfileEdit == 'no'}">
+            <p><a class="text-danger"><fmt:message key="editUsers.profileError"/></a></p>
+        </c:when>
+        <c:otherwise>
+            <p><a class="text-danger"><fmt:message key="editUsers.doAction"/></a></p>
+        </c:otherwise>
+    </c:choose>
 </div>
 </body>
 </html>

@@ -37,7 +37,7 @@ public class EditProfileAction implements Action {
             user.setBirthday(Date.valueOf(request.getParameter(BIRTHDAY)));
             user.setPhoneNumber(request.getParameter(PHONE_NUMBER));
             user.setAddress(request.getParameter(ADDRESS));
-            user.setStatusId(INITIAL_STATUS_ID);
+            user.setStatusId(Long.parseLong(request.getParameter(STATUS_ID)));
             userDao.updateUser(user);
             request.setAttribute(PROFILE_UPDATING, POSITIVE);
         }
