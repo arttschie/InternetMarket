@@ -19,20 +19,20 @@ CREATE SEQUENCE "public".status_locale_id_seq START WITH 50 INCREMENT BY 1;
 CREATE SEQUENCE "public".user_id_seq START WITH 10 INCREMENT BY 1;
 
 CREATE  TABLE "public".locale ( 
-	id                   integer DEFAULT nextval('locale_id_seq'::regclass) NOT NULL  ,
+	id                   bigint DEFAULT nextval('locale_id_seq'::regclass) NOT NULL  ,
 	short_name           varchar(32)  NOT NULL  ,
 	name                 varchar(100)    ,
 	CONSTRAINT locale_pkey PRIMARY KEY ( id )
  );
 
 CREATE  TABLE "public".product_category ( 
-	id                   integer  NOT NULL  ,
+	id                   bigint  NOT NULL  ,
 	name                 varchar(100)  NOT NULL  ,
 	CONSTRAINT product_category_pkey PRIMARY KEY ( id )
  );
 
 CREATE  TABLE "public".product_category_locale ( 
-	id                   integer DEFAULT nextval('product_category_locale_id_seq'::regclass) NOT NULL  ,
+	id                   bigint DEFAULT nextval('product_category_locale_id_seq'::regclass) NOT NULL  ,
 	locale_id            integer  NOT NULL  ,
 	product_category_id  integer  NOT NULL  ,
 	name                 varchar(100)  NOT NULL  ,
@@ -40,13 +40,13 @@ CREATE  TABLE "public".product_category_locale (
  );
 
 CREATE  TABLE "public".status ( 
-	id                   integer DEFAULT nextval('status_id_seq'::regclass) NOT NULL  ,
+	id                   bigint DEFAULT nextval('status_id_seq'::regclass) NOT NULL  ,
 	name                 varchar(100)    ,
 	CONSTRAINT status_pkey PRIMARY KEY ( id )
  );
 
 CREATE  TABLE "public".status_locale ( 
-	id                   integer DEFAULT nextval('status_locale_id_seq'::regclass) NOT NULL  ,
+	id                   bigint DEFAULT nextval('status_locale_id_seq'::regclass) NOT NULL  ,
 	locale_id            integer  NOT NULL  ,
 	name                 varchar(100)  NOT NULL  ,
 	status_id            integer  NOT NULL  ,
@@ -54,7 +54,7 @@ CREATE  TABLE "public".status_locale (
  );
 
 CREATE  TABLE "public"."user" ( 
-	id                   integer DEFAULT nextval('user_id_seq'::regclass) NOT NULL  ,
+	id                   bigint DEFAULT nextval('user_id_seq'::regclass) NOT NULL  ,
 	first_name           varchar(100)    ,
 	last_name            varchar(100)    ,
 	birthday             date    ,
@@ -68,7 +68,7 @@ CREATE  TABLE "public"."user" (
  );
 
 CREATE  TABLE "public"."order" ( 
-	id                   integer DEFAULT nextval('order_id_seq'::regclass) NOT NULL  ,
+	id                   bigint DEFAULT nextval('order_id_seq'::regclass) NOT NULL  ,
 	user_id              integer  NOT NULL  ,
 	status_id            integer DEFAULT 1 NOT NULL  ,
 	total_cost           numeric(10,2)    ,
@@ -78,7 +78,7 @@ CREATE  TABLE "public"."order" (
  );
 
 CREATE  TABLE "public".product ( 
-	id                   integer DEFAULT nextval('product_id_seq'::regclass) NOT NULL  ,
+	id                   bigint DEFAULT nextval('product_id_seq'::regclass) NOT NULL  ,
 	name                 varchar(100)  NOT NULL  ,
 	description          text    ,
 	cost                 numeric(10,2)  NOT NULL  ,
@@ -89,7 +89,7 @@ CREATE  TABLE "public".product (
  );
 
 CREATE  TABLE "public".cart ( 
-	id                   integer DEFAULT nextval('cart_id_seq'::regclass) NOT NULL  ,
+	id                   bigint DEFAULT nextval('cart_id_seq'::regclass) NOT NULL  ,
 	user_id              integer  NOT NULL  ,
 	product_id           integer  NOT NULL  ,
 	"count"              integer    ,
@@ -97,7 +97,7 @@ CREATE  TABLE "public".cart (
  );
 
 CREATE  TABLE "public".order_detail ( 
-	id                   integer DEFAULT nextval('order_detail_id_seq'::regclass) NOT NULL  ,
+	id                   bigint DEFAULT nextval('order_detail_id_seq'::regclass) NOT NULL  ,
 	order_id             integer  NOT NULL  ,
 	product_id           integer  NOT NULL  ,
 	"count"              integer    ,
