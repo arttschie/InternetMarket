@@ -12,6 +12,8 @@ import java.util.Properties;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+import static com.epam.internetMarket.util.constants.ParameterConstants.*;
+
 public class ConnectionPool {
     private final Logger log = Logger.getLogger(this.getClass().getName());
     private String url;
@@ -20,7 +22,8 @@ public class ConnectionPool {
     private String driverDB;
     private Properties properties = getProperties("database.properties");
     private final int maxConnection = Integer.parseInt(properties.getProperty("maxConnection"));
-    private static volatile ConnectionPool instance = null;
+    private static volatile ConnectionPool instance;
+    private static Object mutex = new Object();
     private BlockingQueue<Connection> freeConnections = new ArrayBlockingQueue<>(maxConnection);
 
     private ConnectionPool() { init(); }
@@ -32,20 +35,22 @@ public class ConnectionPool {
     }
 
     public static ConnectionPool getInstance() {
-        if (instance == null){
-            synchronized (ConnectionPool.class) {
-                if (instance == null)
-                    instance = new ConnectionPool();
+        ConnectionPool result = instance;
+        if (result == null){
+            synchronized (mutex) {
+                result = instance;
+                if (result == null)
+                    instance = result = new ConnectionPool();
             }
         }
-        return instance;
+        return result;
     }
 
     private void setDataForConnection() {
-        this.url = properties.getProperty("url");
-        this.user = properties.getProperty("user");
-        this.password = properties.getProperty("password");
-        this.driverDB = properties.getProperty("driver");
+        this.url = properties.getProperty(URL);
+        this.user = properties.getProperty(USER);
+        this.password = properties.getProperty(PASSWORD);
+        this.driverDB = properties.getProperty(DRIVER);
     }
 
     private Properties getProperties(String configurationFile) {
@@ -56,18 +61,13 @@ public class ConnectionPool {
         } catch (IOException e) {
             log.error(e);
         }
-
         return properties;
     }
 
     private void loadDrivers() {
         try {
             Driver driver = (Driver) Class.forName(driverDB).newInstance();
-        } catch (InstantiationException e) {
-            log.warn(e);
-        } catch (IllegalAccessException e) {
-            log.warn(e);
-        } catch (ClassNotFoundException e) {
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             log.warn(e);
         }
     }
@@ -89,10 +89,7 @@ public class ConnectionPool {
             try {
                 connection = DriverManager.getConnection(url, user, password);
                 freeConnections.put(connection);
-            } catch (SQLException e) {
-                log.warn(e);
-                e.printStackTrace();
-            } catch (InterruptedException e) {
+            } catch (SQLException | InterruptedException e) {
                 log.warn(e);
                 e.printStackTrace();
             }

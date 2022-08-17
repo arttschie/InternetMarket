@@ -25,11 +25,35 @@ public class OrderDaoImpl implements OrderDao {
     private static final String GET_STATUS_NAME = "SELECT name FROM status_locale WHERE status_id = ? AND locale_id = ?";
     private static final String UPDATE_ORDER_STATUS = "UPDATE \"order\" SET status_id = ? WHERE id = ?";
 
+    private void establishConnection() {
+        connectionPool = ConnectionPool.getInstance();
+        connection = connectionPool.getConnection();
+    }
+
+    private Order createOrder(ResultSet rs) throws SQLException {
+        Order order = new Order();
+        order.setId(rs.getLong("id"));
+        order.setStatusId(rs.getLong("status_id"));
+        order.setTotalCost(rs.getBigDecimal("total_cost"));
+        order.setDateStart(rs.getDate("date_start"));
+        order.setDateFinish(rs.getDate("date_finish"));
+        return order;
+    }
+
+    private OrderDetail createOrderDetail(ResultSet rs) throws SQLException {
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setId(rs.getLong("id"));
+        orderDetail.setOrderId(rs.getLong("order_id"));
+        orderDetail.setProductId(rs.getLong("product_id"));
+        orderDetail.setCount(rs.getInt("count"));
+        orderDetail.setCost(rs.getBigDecimal("cost"));
+        return orderDetail;
+    }
+
     @Override
     public long addOrder(Order order) {
         Long id = null;
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ORDER)) {
             preparedStatement.setLong(1, order.getUserId());
             preparedStatement.setLong(2, order.getStatusId());
@@ -51,19 +75,12 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public List<Order> getUserOrders(long userId) {
         List<Order> orders = new ArrayList<>();
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(GET_USER_ORDERS)) {
             preparedStatement.setLong(1, userId);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                Order order = new Order();
-                order.setId(rs.getLong("id"));
-                order.setStatusId(rs.getLong("status_id"));
-                order.setTotalCost(rs.getBigDecimal("total_cost"));
-                order.setDateStart(rs.getDate("date_start"));
-                order.setDateFinish(rs.getDate("date_finish"));
-                orders.add(order);
+                orders.add(createOrder(rs));
             }
         } catch (SQLException e) {
             log.error(e);
@@ -75,8 +92,7 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public void addOrderDetail(List<OrderDetail> orderDetailList) {
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(ADD_ORDER_DETAILS)) {
             for (OrderDetail orderDetail : orderDetailList) {
                 preparedStatement.setLong(1, orderDetail.getOrderId());
@@ -95,19 +111,12 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public List<OrderDetail> getOrderDetails(long orderId) {
         List<OrderDetail> orderDetailList = new ArrayList<>();
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(GET_ORDER_DETAILS)) {
              preparedStatement.setLong(1, orderId);
              ResultSet rs = preparedStatement.executeQuery();
              while (rs.next()) {
-                 OrderDetail orderDetail = new OrderDetail();
-                 orderDetail.setId(rs.getLong("id"));
-                 orderDetail.setOrderId(rs.getLong("order_id"));
-                 orderDetail.setProductId(rs.getLong("product_id"));
-                 orderDetail.setCount(rs.getInt("count"));
-                 orderDetail.setCost(rs.getBigDecimal("cost"));
-                 orderDetailList.add(orderDetail);
+                 orderDetailList.add(createOrderDetail(rs));
              }
         } catch (SQLException e) {
             log.error(e);
@@ -119,8 +128,7 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public void reduceCountOfProduct (List<OrderDetail> orderDetailList) {
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         ProductDao productDao = new ProductDaoImpl();
         try (PreparedStatement preparedStatement = connection.prepareStatement(REDUCE_COUNT)) {
             for (OrderDetail orderDetail : orderDetailList) {
@@ -139,8 +147,7 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public String getStatusName(long statusId, long localeId) {
         String statusName = null;
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(GET_STATUS_NAME)) {
             preparedStatement.setLong(1, statusId);
             preparedStatement.setLong(2, localeId);
@@ -158,8 +165,7 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public void updateOrderStatus(long orderId, long statusId) {
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_ORDER_STATUS)) {
             preparedStatement.setLong(1, statusId);
             preparedStatement.setLong(2, orderId);

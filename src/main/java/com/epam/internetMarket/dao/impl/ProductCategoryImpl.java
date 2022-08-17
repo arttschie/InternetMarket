@@ -21,18 +21,26 @@ public class ProductCategoryImpl implements ProductCategoryDao {
     private final static String GET_ALL_CATEGORIES = "SELECT * FROM product_category ORDER BY id";
     private final static String GET_PRODUCT_CATEGORY_NAME = "SELECT \"name\" FROM product_category_locale WHERE product_category_id = ? AND locale_id = ?";
 
-    @Override
-    public List<ProductCategory> getAllProductCategories() {
+    private void establishConnection() {
         connectionPool = ConnectionPool.getInstance();
         connection = connectionPool.getConnection();
+    }
+
+    private ProductCategory createProductCategory(ResultSet rs) throws SQLException {
+        ProductCategory productCategory = new ProductCategory();
+        productCategory.setId(rs.getLong("id"));
+        productCategory.setName(rs.getString("name"));
+        return productCategory;
+    }
+
+    @Override
+    public List<ProductCategory> getAllProductCategories() {
+        establishConnection();
         List<ProductCategory> productCategoryList = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_CATEGORIES)) {
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                ProductCategory productCategory = new ProductCategory();
-                productCategory.setId(rs.getLong("id"));
-                productCategory.setName(rs.getString("name"));
-                productCategoryList.add(productCategory);
+                productCategoryList.add(createProductCategory(rs));
             }
         } catch (SQLException e) {
             log.error(e);
@@ -45,8 +53,7 @@ public class ProductCategoryImpl implements ProductCategoryDao {
     @Override
     public String getProductCategoryName(long categoryId, long localeId) {
         String productCategoryName = null;
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(GET_PRODUCT_CATEGORY_NAME)) {
             preparedStatement.setLong(1, categoryId);
             preparedStatement.setLong(2, localeId);

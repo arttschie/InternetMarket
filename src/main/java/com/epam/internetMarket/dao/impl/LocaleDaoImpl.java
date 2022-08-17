@@ -21,18 +21,27 @@ public class LocaleDaoImpl implements LocaleDao {
     private static final String GET_ALL_LOCALES = "SELECT * FROM locale";
     private static final String GET_LOCALE_NAME = "SELECT short_name FROM locale WHERE id = ?";
 
+    private void establishConnection() {
+        connectionPool = ConnectionPool.getInstance();
+        connection = connectionPool.getConnection();
+    }
+
+    private Locale createLocale(ResultSet rs) throws SQLException {
+        Locale locale = new Locale();
+        locale.setId(rs.getLong("id"));
+        locale.setShortName(rs.getString("short_name"));
+        locale.setName(rs.getString("name"));
+        return locale;
+    }
+
     @Override
     public List<Locale> getAllLocales() {
         List<Locale> locales = new ArrayList<>();
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_LOCALES)) {
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                Long id = rs.getLong("id");
-                String shortName = rs.getString("short_name");
-                String name = rs.getString("name");
-                locales.add(new Locale(id, shortName, name));
+                locales.add(createLocale(rs));
             }
         } catch (SQLException e) {
             log.error(e);
@@ -45,8 +54,7 @@ public class LocaleDaoImpl implements LocaleDao {
     @Override
     public String getLocaleShortNameById(Long id) {
         String locale = null;
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(GET_LOCALE_NAME)) {
             preparedStatement.setLong(1, id);
             ResultSet rs = preparedStatement.executeQuery();
