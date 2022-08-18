@@ -51,7 +51,7 @@ public class RegisterUserAction implements Action{
             user.setAddress(request.getParameter(ADDRESS));
             user.setPassword(MD5.getMd5(request.getParameter(PASSWORD)));
             user.setUsername(request.getParameter(USERNAME));
-            userDao.createUser(user);
+            userDao.addUser(user);
             user.setId(userDao.getIdByUsername(request.getParameter(USERNAME)));
             session.setAttribute(LOGGED_USER, user);
             request.getRequestDispatcher(PROFILE_PAGE).forward(request, response);

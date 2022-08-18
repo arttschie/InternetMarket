@@ -11,9 +11,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.Bidi;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.epam.internetMarket.util.constants.DatabaseConstants.*;
 
 public class ProductDaoImpl implements ProductDao {
     private final Logger log = Logger.getLogger(this.getClass().getName());
@@ -40,10 +41,26 @@ public class ProductDaoImpl implements ProductDao {
     private static final String GET_PRODUCT_CATEGORY = "SELECT \"name\" FROM product_category_locale WHERE product_category_id = ? AND locale_id = ?";
     private static final String SET_COUNT_TO_ZERO = "UPDATE product SET count = 0 WHERE id = ?";
 
-    @Override
-    public void addProduct(Product product) {
+    private void establishConnection() {
         connectionPool = ConnectionPool.getInstance();
         connection = connectionPool.getConnection();
+    }
+
+    private Product createProduct(ResultSet rs, Product product) throws SQLException {
+        product = new Product();
+        product.setId(rs.getLong(ID));
+        product.setCost(rs.getBigDecimal(COST));
+        product.setCount(rs.getInt(COUNT));
+        product.setDescription(rs.getString(DESCRIPTION));
+        product.setName(rs.getString(NAME));
+        product.setProductCategoryId(rs.getInt(PRODUCT_CATEGORY_ID));
+        product.setImageUrl(rs.getString(IMAGE_URL));
+        return product;
+    }
+
+    @Override
+    public void addProduct(Product product) {
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(ADD_PRODUCT)) {
             preparedStatement.setString(1, product.getName());
             preparedStatement.setString(2, product.getDescription());
@@ -62,20 +79,12 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public Product getProductById(long id) {
         Product product = null;
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try(PreparedStatement preparedStatement = connection.prepareStatement(SELECT_PRODUCT_BY_ID)) {
             preparedStatement.setLong(1, id);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                product = new Product();
-                product.setId(rs.getLong("id"));
-                product.setCost(rs.getBigDecimal("cost"));
-                product.setCount(rs.getInt("count"));
-                product.setDescription(rs.getString("description"));
-                product.setName(rs.getString("name"));
-                product.setProductCategoryId(rs.getInt("product_category_id"));
-                product.setImageUrl(rs.getString("image_url"));
+                product = createProduct(rs, product);
             }
         } catch (SQLException e) {
             log.error(e);
@@ -88,20 +97,12 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public List<Product> getAllProducts() {
         List<Product> products = new ArrayList<>();
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_PRODUCTS)) {
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                Product product = new Product();
-                product.setId(rs.getLong("id"));
-                product.setCost(rs.getBigDecimal("cost"));
-                product.setCount(rs.getInt("count"));
-                product.setDescription(rs.getString("description"));
-                product.setName(rs.getString("name"));
-                product.setProductCategoryId(rs.getInt("product_category_id"));
-                product.setImageUrl(rs.getString("image_url"));
-                products.add(product);
+                Product product = null;
+                products.add(createProduct(rs, product));
             }
         } catch (SQLException e) {
             log.error(e);
@@ -113,8 +114,7 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public void updateProduct(Product product) {
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connectionPool.getConnection().prepareStatement(UPDATE_PRODUCT)) {
             preparedStatement.setString(1, product.getName());
             preparedStatement.setString(2, product.getDescription());
@@ -133,8 +133,7 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public void deleteProduct(long id) {
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_PRODUCT)) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
@@ -148,13 +147,12 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public String getProductName(String name) {
         String productName = null;
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(GET_PRODUCT_NAME)) {
             preparedStatement.setString(1, name);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                productName = rs.getString("name");
+                productName = rs.getString(NAME);
             }
         } catch (SQLException e) {
             log.error(e);
@@ -167,13 +165,12 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public int getProductCount(long id) {
         int count = 0;
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(GET_PRODUCT_COUNT)) {
             preparedStatement.setLong(1, id);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                count = rs.getInt("count");
+                count = rs.getInt(COUNT);
             }
         } catch (SQLException e) {
             log.error(e);
@@ -186,13 +183,12 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public BigDecimal getProductCost(String name) {
         BigDecimal cost = null;
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(GET_PRODUCT_COST)) {
             preparedStatement.setString(1, name);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                cost = rs.getBigDecimal("cost");
+                cost = rs.getBigDecimal(COST);
             }
         } catch (SQLException e) {
             log.error(e);
@@ -205,14 +201,13 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public String getCategoryName(long productId, long localeId) {
         String categoryName = null;
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(GET_PRODUCT_CATEGORY)) {
             preparedStatement.setLong(1, productId);
             preparedStatement.setLong(2, localeId);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                categoryName = rs.getString("name");
+                categoryName = rs.getString(NAME);
             }
         } catch (SQLException e) {
             log.error(e);
@@ -224,8 +219,7 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public void setAmountToZero(long id) {
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SET_COUNT_TO_ZERO)) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();

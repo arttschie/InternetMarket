@@ -12,6 +12,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.epam.internetMarket.util.constants.DatabaseConstants.*;
+
 public class OrderDaoImpl implements OrderDao {
     private final Logger log = Logger.getLogger(this.getClass().getName());
     private ConnectionPool connectionPool;
@@ -32,21 +34,21 @@ public class OrderDaoImpl implements OrderDao {
 
     private Order createOrder(ResultSet rs) throws SQLException {
         Order order = new Order();
-        order.setId(rs.getLong("id"));
-        order.setStatusId(rs.getLong("status_id"));
-        order.setTotalCost(rs.getBigDecimal("total_cost"));
-        order.setDateStart(rs.getDate("date_start"));
-        order.setDateFinish(rs.getDate("date_finish"));
+        order.setId(rs.getLong(ID));
+        order.setStatusId(rs.getLong(STATUS_ID));
+        order.setTotalCost(rs.getBigDecimal(TOTAL_COST));
+        order.setDateStart(rs.getDate(DATE_START));
+        order.setDateFinish(rs.getDate(DATE_FINISH));
         return order;
     }
 
     private OrderDetail createOrderDetail(ResultSet rs) throws SQLException {
         OrderDetail orderDetail = new OrderDetail();
-        orderDetail.setId(rs.getLong("id"));
-        orderDetail.setOrderId(rs.getLong("order_id"));
-        orderDetail.setProductId(rs.getLong("product_id"));
-        orderDetail.setCount(rs.getInt("count"));
-        orderDetail.setCost(rs.getBigDecimal("cost"));
+        orderDetail.setId(rs.getLong(ID));
+        orderDetail.setOrderId(rs.getLong(ORDER_ID));
+        orderDetail.setProductId(rs.getLong(PRODUCT_ID));
+        orderDetail.setCount(rs.getInt(COUNT));
+        orderDetail.setCost(rs.getBigDecimal(COST));
         return orderDetail;
     }
 

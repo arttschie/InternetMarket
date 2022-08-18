@@ -12,7 +12,7 @@ import java.util.Properties;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import static com.epam.internetMarket.util.constants.ParameterConstants.*;
+import static com.epam.internetMarket.util.constants.DatabaseConstants.*;
 
 public class ConnectionPool {
     private final Logger log = Logger.getLogger(this.getClass().getName());
@@ -20,8 +20,8 @@ public class ConnectionPool {
     private String user;
     private String password;
     private String driverDB;
-    private Properties properties = getProperties("database.properties");
-    private final int maxConnection = Integer.parseInt(properties.getProperty("maxConnection"));
+    private Properties properties = getProperties(CONFIGURATION_FILE);
+    private final int maxConnection = Integer.parseInt(properties.getProperty(MAX_CONNECTION));
     private static volatile ConnectionPool instance;
     private static Object mutex = new Object();
     private BlockingQueue<Connection> freeConnections = new ArrayBlockingQueue<>(maxConnection);

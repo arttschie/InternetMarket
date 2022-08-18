@@ -3,7 +3,6 @@ package com.epam.internetMarket.dao.impl;
 import com.epam.internetMarket.dao.ProductCategoryDao;
 import com.epam.internetMarket.database.ConnectionPool;
 import com.epam.internetMarket.entity.ProductCategory;
-import com.epam.internetMarket.entity.ProductCategoryLocale;
 import org.apache.log4j.Logger;
 
 import java.sql.Connection;
@@ -12,6 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.epam.internetMarket.util.constants.DatabaseConstants.*;
 
 public class ProductCategoryImpl implements ProductCategoryDao {
     private ConnectionPool connectionPool;
@@ -28,8 +29,8 @@ public class ProductCategoryImpl implements ProductCategoryDao {
 
     private ProductCategory createProductCategory(ResultSet rs) throws SQLException {
         ProductCategory productCategory = new ProductCategory();
-        productCategory.setId(rs.getLong("id"));
-        productCategory.setName(rs.getString("name"));
+        productCategory.setId(rs.getLong(ID));
+        productCategory.setName(rs.getString(NAME));
         return productCategory;
     }
 
@@ -59,7 +60,7 @@ public class ProductCategoryImpl implements ProductCategoryDao {
             preparedStatement.setLong(2, localeId);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                productCategoryName = rs.getString("name");
+                productCategoryName = rs.getString(NAME);
             }
         } catch (SQLException e) {
             log.error(e);

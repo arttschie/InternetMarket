@@ -11,6 +11,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.epam.internetMarket.util.constants.DatabaseConstants.*;
+
 public class UserDaoImpl implements UserDao {
     private final Logger log = Logger.getLogger(this.getClass().getName());
     private ConnectionPool connectionPool;
@@ -27,10 +29,26 @@ public class UserDaoImpl implements UserDao {
     private static final String CHECK_USER = "SELECT * FROM \"user\" WHERE username = ?";
     private static final String GET_USER_STATUS_NAME = "SELECT \"name\" FROM status_locale WHERE locale_id = ? AND status_id = ?";
 
-    @Override
-    public void createUser(User user) {
+    private void establishConnection() {
         connectionPool = ConnectionPool.getInstance();
         connection = connectionPool.getConnection();
+    }
+
+    private User createUser(ResultSet rs, User user) throws SQLException {
+        user.setUsername(rs.getString(USERNAME));
+        user.setFirstName(rs.getString(FIRST_NAME));
+        user.setLastName(rs.getString(LAST_NAME));
+        user.setBirthday(rs.getDate(BIRTHDAY));
+        user.setPhoneNumber(rs.getString(PHONE_NUMBER));
+        user.setAddress(rs.getString(ADDRESS));
+        user.setIsAdmin(rs.getBoolean(IS_ADMIN));
+        user.setStatusId(rs.getLong(STATUS_ID));
+        return user;
+    }
+
+    @Override
+    public void addUser(User user) {
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(ADD_USER)) {
             preparedStatement.setString(1, user.getUsername());
             preparedStatement.setString(2, user.getPassword());
@@ -50,8 +68,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void updateUser(User user) {
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_USER)) {
             preparedStatement.setString(1, user.getFirstName());
             preparedStatement.setString(2, user.getLastName());
@@ -70,8 +87,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void updatePassword(long id, String newPassword) {
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_PASSWORD)) {
             preparedStatement.setString(1, newPassword);
             preparedStatement.setLong(2, id);
@@ -86,22 +102,13 @@ public class UserDaoImpl implements UserDao {
     @Override
     public List<User> getAllUsers() {
         List<User> allUsers = new ArrayList<>();
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_USERS)) {
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 User user = new User();
-                user.setId(rs.getLong("id"));
-                user.setUsername(rs.getString("username"));
-                user.setFirstName(rs.getString("first_name"));
-                user.setLastName(rs.getString("last_name"));
-                user.setBirthday(rs.getDate("birthday"));
-                user.setPhoneNumber(rs.getString("phone_number"));
-                user.setAddress(rs.getString("address"));
-                user.setIsAdmin(rs.getBoolean("is_admin"));
-                user.setStatusId(rs.getLong("status_id"));
-                allUsers.add(user);
+                user.setId(rs.getLong(ID));
+                allUsers.add(createUser(rs, user));
             }
         } catch (SQLException e) {
             log.error(e);
@@ -114,13 +121,12 @@ public class UserDaoImpl implements UserDao {
     @Override
     public boolean checkPassword(long id, String currentPassword) {
         boolean checkPassword = false;
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_PASSWORD)) {
             preparedStatement.setLong(1, id);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                checkPassword = rs.getString("password").equals(MD5.getMd5(currentPassword));
+                checkPassword = rs.getString(PASSWORD).equals(MD5.getMd5(currentPassword));
             }
         } catch (SQLException e) {
             log.error(e);
@@ -133,8 +139,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User getUserByUsernameAndPassword(String username, String password) {
         User user = null;
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(GET_USER_BY_USERNAME_AND_PASSWORD)) {
             preparedStatement.setString(1, username);
             preparedStatement.setString(2, MD5.getMd5(password));
@@ -142,14 +147,7 @@ public class UserDaoImpl implements UserDao {
             while (rs.next()) {
                 user = new User();
                 user.setId(getIdByUsername(username));
-                user.setFirstName(rs.getString("first_name"));
-                user.setLastName(rs.getString("last_name"));
-                user.setBirthday(rs.getDate("birthday"));
-                user.setPhoneNumber(rs.getString("phone_number"));
-                user.setAddress(rs.getString("address"));
-                user.setIsAdmin(rs.getBoolean("is_admin"));
-                user.setStatusId(rs.getLong("status_id"));
-                user.setUsername(rs.getString("username"));
+                user = createUser(rs, user);
             }
         } catch (SQLException e) {
             log.error(e);
@@ -162,13 +160,12 @@ public class UserDaoImpl implements UserDao {
     @Override
     public long getIdByUsername(String username) {
         long userId = 0;
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(GET_USER_BY_USERNAME)) {
             preparedStatement.setString(1, username);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                userId = rs.getLong("id");
+                userId = rs.getLong(ID);
             }
         } catch (SQLException e) {
             log.error(e);
@@ -181,8 +178,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public boolean userExists(String username) {
         boolean userExists = false;
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_USER)) {
             preparedStatement.setString(1, username);
             ResultSet rs = preparedStatement.executeQuery();
@@ -200,22 +196,14 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User getUserById(long id) {
         User user = null;
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(GET_USER_BY_ID)) {
             preparedStatement.setLong(1, id);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 user = new User();
                 user.setId(id);
-                user.setFirstName(rs.getString("first_name"));
-                user.setLastName(rs.getString("last_name"));
-                user.setBirthday(rs.getDate("birthday"));
-                user.setPhoneNumber(rs.getString("phone_number"));
-                user.setAddress(rs.getString("address"));
-                user.setIsAdmin(rs.getBoolean("is_admin"));
-                user.setStatusId(rs.getLong("status_id"));
-                user.setUsername(rs.getString("username"));
+                user = createUser(rs, user);
             }
         } catch (SQLException e) {
             log.error(e);
@@ -228,14 +216,13 @@ public class UserDaoImpl implements UserDao {
     @Override
     public String getUserStatusName(User user, long localeId) {
         String userStatus = null;
-        connectionPool = ConnectionPool.getInstance();
-        connection = connectionPool.getConnection();
+        establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(GET_USER_STATUS_NAME)) {
             preparedStatement.setLong(1, localeId);
             preparedStatement.setLong(2, user.getStatusId());
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                userStatus = rs.getString("name");
+                userStatus = rs.getString(NAME);
             }
         } catch (SQLException e) {
             log.error(e);

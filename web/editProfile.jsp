@@ -82,6 +82,7 @@
                                     </button>
                                 </div>
                             </div>
+                            <input type="hidden" name="statusId" value="${sessionScope.loggedUser.statusId}">
                             <input type="hidden" name="pageName" value="editProfile.jsp">
                             <input type="hidden" name="userId" value="${sessionScope.loggedUser.id}">
                         </form>

@@ -3,6 +3,8 @@ package com.epam.internetMarket.entity;
 import java.io.Serializable;
 import java.sql.Date;
 
+import static com.epam.internetMarket.util.constants.ParameterConstants.INITIAL_STATUS_ID;
+
 public class User implements Serializable {
     private long id;
     private String firstName;
@@ -12,7 +14,7 @@ public class User implements Serializable {
     private String address;
     private String password;
     private boolean isAdmin = false;
-    private long statusId = 1L;
+    private long statusId = INITIAL_STATUS_ID;
     private String username;
 
     public User() {

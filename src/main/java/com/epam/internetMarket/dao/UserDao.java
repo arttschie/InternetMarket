@@ -5,7 +5,7 @@ import com.epam.internetMarket.entity.User;
 import java.util.List;
 
 public interface UserDao {
-    void createUser (User user);
+    void addUser(User user);
     void updateUser (User user);
     void updatePassword (long id, String newPassword);
     List<User> getAllUsers();

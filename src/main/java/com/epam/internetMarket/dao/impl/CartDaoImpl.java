@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.epam.internetMarket.util.constants.DatabaseConstants.*;
+
 public class CartDaoImpl implements CartDao {
     private final Logger log = Logger.getLogger(this.getClass().getName());
     private ConnectionPool connectionPool;
@@ -28,10 +30,10 @@ public class CartDaoImpl implements CartDao {
 
     private Cart createCart (ResultSet rs, long userId) throws SQLException {
         Cart cart = new Cart();
-        cart.setId(rs.getLong("id"));
+        cart.setId(rs.getLong(ID));
         cart.setUserId(userId);
-        cart.setProductId(rs.getLong("product_id"));
-        cart.setCount(rs.getInt("count"));
+        cart.setProductId(rs.getLong(PRODUCT_ID));
+        cart.setCount(rs.getInt(COUNT));
         return cart;
     }
 
@@ -129,7 +131,7 @@ public class CartDaoImpl implements CartDao {
             preparedStatement.setLong(1, userId);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                sum = rs.getInt("sum");
+                sum = rs.getInt(SUM);
             }
         } catch (SQLException e) {
             log.error(e);

@@ -12,6 +12,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.epam.internetMarket.util.constants.DatabaseConstants.*;
+
 public class LocaleDaoImpl implements LocaleDao {
     private final Logger log = Logger.getLogger(this.getClass().getName());
 
@@ -28,9 +30,9 @@ public class LocaleDaoImpl implements LocaleDao {
 
     private Locale createLocale(ResultSet rs) throws SQLException {
         Locale locale = new Locale();
-        locale.setId(rs.getLong("id"));
-        locale.setShortName(rs.getString("short_name"));
-        locale.setName(rs.getString("name"));
+        locale.setId(rs.getLong(ID));
+        locale.setShortName(rs.getString(SHORT_NAME));
+        locale.setName(rs.getString(NAME));
         return locale;
     }
 
@@ -59,7 +61,7 @@ public class LocaleDaoImpl implements LocaleDao {
             preparedStatement.setLong(1, id);
             ResultSet rs = preparedStatement.executeQuery();
              while (rs.next()) {
-                 locale = rs.getString("short_name");
+                 locale = rs.getString(SHORT_NAME);
              }
         } catch (SQLException e) {
             log.error(e);
