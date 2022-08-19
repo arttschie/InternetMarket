@@ -43,8 +43,8 @@ public class EditProfileAction implements Action {
         }
 
         if (request.getParameter(PAGE_NAME).equals(EDIT_PROFILE_PAGE)){
-            request.getRequestDispatcher(PROFILE_PAGE).forward(request,response);
             session.setAttribute(LOGGED_USER, userDao.getUserById(user.getId()));
+            request.getRequestDispatcher(PROFILE_PAGE).forward(request,response);
         }
         if (request.getParameter(PAGE_NAME).equals(EDIT_USERS_PAGE)) {
             request.getRequestDispatcher(EDIT_USERS_PAGE).forward(request, response);

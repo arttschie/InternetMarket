@@ -14,9 +14,7 @@ public class MD5 {
             while (hashtext.length() < 32) {
                 hashtext = "0" + hashtext;
             }
-
             return hashtext;
-
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }

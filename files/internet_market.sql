@@ -64,6 +64,7 @@ CREATE  TABLE "public"."user" (
 	is_admin             boolean  NOT NULL  ,
 	status_id            integer DEFAULT 1 NOT NULL  ,
 	username             varchar(100)  NOT NULL  ,
+	email                varchar(100)    ,
 	CONSTRAINT user_pkey PRIMARY KEY ( id )
  );
 
@@ -182,8 +183,8 @@ INSERT INTO "public".status_locale( id, locale_id, name, status_id ) VALUES ( 7,
 INSERT INTO "public".status_locale( id, locale_id, name, status_id ) VALUES ( 8, 2, 'On the road', 4);
 INSERT INTO "public".status_locale( id, locale_id, name, status_id ) VALUES ( 9, 1, 'Доставлен', 5);
 INSERT INTO "public".status_locale( id, locale_id, name, status_id ) VALUES ( 10, 2, 'Delivered', 5);
-INSERT INTO "public"."user"( id, first_name, last_name, birthday, phone_number, address, "password", is_admin, status_id, username ) VALUES ( 1, 'admin', 'admin', '1998-06-28', '87072422806', 'Караганда', '295ce6711606eaea5a2e8f0c4703e7b7', true, 1, 'admin');
-INSERT INTO "public"."user"( id, first_name, last_name, birthday, phone_number, address, "password", is_admin, status_id, username ) VALUES ( 2, 'user', 'user', '1978-11-11', '+7 (999) 966-28-06', 'Москва', 'c3154c5ade255b20220f88685620dc7e', false, 1, 'user');
+INSERT INTO "public"."user"( id, first_name, last_name, birthday, phone_number, address, "password", is_admin, status_id, username, email ) VALUES ( 1, 'admin', 'admin', '1998-06-28', '87072422806', 'Караганда', '295ce6711606eaea5a2e8f0c4703e7b7', true, 1, 'admin', 'nogin98@gmail.com');
+INSERT INTO "public"."user"( id, first_name, last_name, birthday, phone_number, address, "password", is_admin, status_id, username, email ) VALUES ( 2, 'user', 'user', '1978-11-11', '+7 (999) 966-28-06', 'Москва', 'c3154c5ade255b20220f88685620dc7e', false, 1, 'user', 'nogin98@gmail.com');
 INSERT INTO "public".product( id, name, description, cost, "count", product_category_id, image_url ) VALUES ( 63, 'Мороженое пломбир 110г', 'с вафельным рожком', 300, 750, 10, 'icecream_plombir.jpg');
 INSERT INTO "public".product( id, name, description, cost, "count", product_category_id, image_url ) VALUES ( 64, 'Молочный шоколад 80г', 'обычный молочный шоколад', 300, 1000, 10, 'icecream_chocolate.jpg');
 INSERT INTO "public".product( id, name, description, cost, "count", product_category_id, image_url ) VALUES ( 68, 'Хлеб пшеничный', 'обычный хлеб', 130, 1000, 11, 'bread.jpg');

@@ -11,6 +11,7 @@ public class ParameterConstants {
     public static final String PHONE_NUMBER = "phoneNumber";
     public static final String ADDRESS = "address";
     public static final String STATUS_ID = "statusId";
+    public static final String EMAIL = "email";
     public static final String USER_CART = "userCart";
     public static final String USER_ORDERS = "userOrders";
     public static final String CART_ADDITION = "successCart";
@@ -36,6 +37,9 @@ public class ParameterConstants {
     public static final String FILL_ALL_FIELDS = "parameters.fillAllFields";
     public static final String USER_BLOCKED = "parameters.userBlocked";
     public static final String WRONG_CREDENTIALS = "parameters.wrongCredentials";
+    public static final String WRONG_EMAIL = "parameters.wrongEmail";
+    public static final String WRONG_USERNAME = "parameters.wrongUsername";
+    public static final String WRONG_PASSWORD = "parameters.incorrectPassword";
     public static final String USERNAME_TAKEN = "parameters.usernameTaken";
     public static final String PASSWORD_NOT_MATCH = "parameters.passwordNotMatch";
     public static final String CURRENT_PASSWORD = "currentPassword";

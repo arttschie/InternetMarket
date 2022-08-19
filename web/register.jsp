@@ -39,6 +39,11 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="email"><fmt:message key="register.email"/></label>
+                        <input id="email" type="text" class="form-control" name="email" data-eye required>
+                    </div>
+
+                    <div class="form-group">
                         <label for="firstName"><fmt:message key="register.firstName"/></label>
                         <input id="firstName" type="text" class="form-control" name="firstName"  autofocus required>
                     </div>

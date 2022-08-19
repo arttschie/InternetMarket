@@ -31,10 +31,13 @@ public class RegisterUserAction implements Action{
             request.setAttribute(ERROR_REGISTER, FILL_ALL_FIELDS);
             request.getRequestDispatcher(REGISTER_PAGE).forward(request, response);
         } else if (!registerValidator.isUsernameValid(request.getParameter(USERNAME))) {
-            request.setAttribute(ERROR_REGISTER, WRONG_CREDENTIALS);
+            request.setAttribute(ERROR_REGISTER, WRONG_USERNAME);
             request.getRequestDispatcher(REGISTER_PAGE).forward(request, response);
         } else if (!passwordValidator.isPasswordValid(request.getParameter(PASSWORD))) {
-            request.setAttribute(ERROR_REGISTER, WRONG_CREDENTIALS);
+            request.setAttribute(ERROR_REGISTER, WRONG_PASSWORD);
+            request.getRequestDispatcher(REGISTER_PAGE).forward(request, response);
+        } else if (!registerValidator.isEmailValid(request.getParameter(EMAIL))) {
+            request.setAttribute(ERROR_REGISTER, WRONG_EMAIL);
             request.getRequestDispatcher(REGISTER_PAGE).forward(request, response);
         } else if (userDao.userExists(request.getParameter(USERNAME))) {
             request.setAttribute(ERROR_REGISTER, USERNAME_TAKEN);
@@ -51,6 +54,7 @@ public class RegisterUserAction implements Action{
             user.setAddress(request.getParameter(ADDRESS));
             user.setPassword(MD5.getMd5(request.getParameter(PASSWORD)));
             user.setUsername(request.getParameter(USERNAME));
+            user.setEmail(request.getParameter(EMAIL));
             userDao.addUser(user);
             user.setId(userDao.getIdByUsername(request.getParameter(USERNAME)));
             session.setAttribute(LOGGED_USER, user);

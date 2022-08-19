@@ -29,4 +29,5 @@ public class DatabaseConstants {
     public static final String PHONE_NUMBER = "phone_number";
     public static final String ADDRESS = "address";
     public static final String IS_ADMIN = "is_admin";
+    public static final String EMAIL = "email";
 }

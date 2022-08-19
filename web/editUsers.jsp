@@ -85,6 +85,7 @@
             <tr>
                 <form action="EditProfile" method="POST">
                     <td>${user.username}</td>
+                    <td>${user.email}</td>
                     <td>${user.firstName}<br><input type="text" name="firstName" required></td>
                     <td>${user.lastName}<br><input type="text" name="lastName" required></td>
                     <td>${user.birthday}<br><input type="date" name="birthday" required></td>

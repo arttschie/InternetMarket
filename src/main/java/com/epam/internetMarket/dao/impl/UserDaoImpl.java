@@ -18,14 +18,14 @@ public class UserDaoImpl implements UserDao {
     private ConnectionPool connectionPool;
     private Connection connection;
 
-    private static final String ADD_USER = "INSERT INTO \"user\" (username, password, first_name, last_name, birthday, phone_number, address, is_admin) VALUES (?,?,?,?,?,?,?,?)";
+    private static final String ADD_USER = "INSERT INTO \"user\" (username, password, first_name, last_name, birthday, phone_number, address, is_admin, email) VALUES (?,?,?,?,?,?,?,?,?)";
     private static final String UPDATE_USER = "UPDATE \"user\" SET first_name = ?, last_name = ?, birthday = ?, phone_number = ?, address = ?, status_id = ? WHERE id = ?";
     private static final String GET_ALL_USERS = "SELECT * FROM \"user\" ORDER BY id";
     private static final String UPDATE_PASSWORD = "UPDATE \"user\" SET password = ? WHERE id = ?";
     private static final String CHECK_PASSWORD = "SELECT password FROM \"user\" WHERE id = ?";
     private static final String GET_USER_BY_USERNAME = "SELECT id FROM \"user\" WHERE username = ?";
-    private static final String GET_USER_BY_ID = "SELECT username, first_name, last_name, birthday, phone_number, address, status_id, is_admin FROM \"user\" WHERE id = ?";
-    private static final String GET_USER_BY_USERNAME_AND_PASSWORD = "SELECT username, first_name, last_name, birthday, phone_number, address, status_id, is_admin FROM \"user\" WHERE username = ? AND password = ?";
+    private static final String GET_USER_BY_ID = "SELECT username, first_name, last_name, birthday, phone_number, address, status_id, is_admin, email FROM \"user\" WHERE id = ?";
+    private static final String GET_USER_BY_USERNAME_AND_PASSWORD = "SELECT username, first_name, last_name, birthday, phone_number, address, status_id, is_admin, email FROM \"user\" WHERE username = ? AND password = ?";
     private static final String CHECK_USER = "SELECT * FROM \"user\" WHERE username = ?";
     private static final String GET_USER_STATUS_NAME = "SELECT \"name\" FROM status_locale WHERE locale_id = ? AND status_id = ?";
 
@@ -43,6 +43,7 @@ public class UserDaoImpl implements UserDao {
         user.setAddress(rs.getString(ADDRESS));
         user.setIsAdmin(rs.getBoolean(IS_ADMIN));
         user.setStatusId(rs.getLong(STATUS_ID));
+        user.setEmail(rs.getString(EMAIL));
         return user;
     }
 
@@ -58,6 +59,7 @@ public class UserDaoImpl implements UserDao {
             preparedStatement.setString(6, user.getPhoneNumber());
             preparedStatement.setString(7, user.getAddress());
             preparedStatement.setBoolean(8, user.getIsAdmin());
+            preparedStatement.setString(9, user.getEmail());
             preparedStatement.executeUpdate();
         } catch (SQLException e){
             log.error(e);

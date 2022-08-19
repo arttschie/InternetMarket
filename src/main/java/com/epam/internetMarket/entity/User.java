@@ -16,6 +16,7 @@ public class User implements Serializable {
     private boolean isAdmin = false;
     private long statusId = INITIAL_STATUS_ID;
     private String username;
+    private String email;
 
     public User() {
     }
@@ -87,6 +88,10 @@ public class User implements Serializable {
     public String getUsername() { return username; }
 
     public void setUsername(String username) { this.username = username; }
+
+    public String getEmail() { return email; }
+
+    public void setEmail(String email) { this.email = email; }
 
     @Override
     public String toString() {
