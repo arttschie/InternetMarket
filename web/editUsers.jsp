@@ -59,9 +59,6 @@
         <c:when test="${requestScope.successPasswordEdit == 'yes'}">
             <p><a class="text-success"><fmt:message key="parameters.passwordUpdated"/></a></p>
         </c:when>
-        <c:otherwise>
-            <p><a class="text-danger"><fmt:message key="editUsers.doAction"/></a></p>
-        </c:otherwise>
     </c:choose>
 </div>
 <div style="padding: 25px">
@@ -152,9 +149,6 @@
         <c:when test="${requestScope.successProfileEdit == 'no'}">
             <p><a class="text-danger"><fmt:message key="editUsers.profileError"/></a></p>
         </c:when>
-        <c:otherwise>
-            <p><a class="text-danger"><fmt:message key="editUsers.doAction"/></a></p>
-        </c:otherwise>
     </c:choose>
 </div>
 </body>

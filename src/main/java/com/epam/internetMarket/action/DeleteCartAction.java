@@ -10,8 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.text.ParseException;
 
 import static com.epam.internetMarket.util.constants.PageConstants.PROFILE_PAGE;
 import static com.epam.internetMarket.util.constants.ParameterConstants.*;
@@ -19,21 +17,34 @@ import static com.epam.internetMarket.util.constants.ParameterConstants.*;
 public class DeleteCartAction implements Action {
     private final CartDao cartDao = new CartDaoImpl();
 
-    @Override
-    public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException, SQLException {
+    private User receiveUser(HttpServletRequest request) {
         HttpSession session = request.getSession(true);
-
         User user = (User) session.getAttribute(LOGGED_USER);
+        return user;
+    }
 
+    private Long receiveProductId(HttpServletRequest request) {
         Long productId = Long.parseLong(request.getParameter(PRODUCT_ID));
+        return productId;
+    }
+
+    private Cart createCart(HttpServletRequest request) {
         Cart cart = new Cart();
-        cart.setUserId(user.getId());
-        cart.setProductId(productId);
-        cartDao.delete(cart);
+        cart.setUserId(receiveUser(request).getId());
+        cart.setProductId(receiveProductId(request));
+        return cart;
+    }
 
-        session.setAttribute(USER_CART, cartDao.getCartProducts(user.getId()));
-        session.setAttribute(CART_SUM, cartDao.getSumOfCart(user.getId()));
+    private void setSessionAttributes(HttpServletRequest request) {
+        HttpSession session = request.getSession(true);
+        session.setAttribute(USER_CART, cartDao.getCartProducts(receiveUser(request).getId()));
+        session.setAttribute(CART_SUM, cartDao.getSumOfCart(receiveUser(request).getId()));
+    }
 
+    @Override
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        cartDao.delete(createCart(request));
+        setSessionAttributes(request);
         request.getRequestDispatcher(PROFILE_PAGE).forward(request, response);
     }
 }

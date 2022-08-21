@@ -18,8 +18,6 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.sql.SQLException;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,55 +30,82 @@ public class MakeOrderAction implements Action {
     private final ProductDao productDao = new ProductDaoImpl();
     private final OrderDao orderDao = new OrderDaoImpl();
 
-    @Override
-    public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException, SQLException {
+    private User receiveUser(HttpServletRequest request) {
         HttpSession session = request.getSession(true);
-
-        long orderId;
         User user = (User) session.getAttribute(LOGGED_USER);
-        List<Cart> userCartProducts = cartDao.getCartProducts(user.getId());
+        return user;
+    }
 
-        if (userCartProducts == null || userCartProducts.size() == 0) {
-            request.setAttribute(ORDER_COMPLETION, NEGATIVE);
-            request.getRequestDispatcher(PROFILE_PAGE).forward(request, response);
-            return;
-        }
+    private long receiveOrderId(HttpServletRequest request) {
+        long orderId = orderDao.addOrder(createOrder(request, receiveUser(request)));
+        return orderId;
+    }
 
-        for (Cart cartProduct: userCartProducts) {
-            if (cartProduct.getCount() > productDao.getProductCount(cartProduct.getProductId())) {
-                request.setAttribute(ORDER_COMPLETION, NEGATIVE);
-                request.getRequestDispatcher(PROFILE_PAGE).forward(request, response);
-                return;
-            }
-        }
-
+    private Order createOrder(HttpServletRequest request, User user) {
         Order order = new Order();
         order.setUserId(user.getId());
         order.setStatusId(INITIAL_ORDER_STATUS_ID);
         order.setDateStart(Date.valueOf(LocalDate.now()));
         order.setTotalCost(BigDecimal.valueOf(Double.parseDouble(request.getParameter(TOTAL_COST))));
         order.setDateFinish(Date.valueOf(LocalDate.now()));
-        orderId = orderDao.addOrder(order);
+        return order;
+    }
 
-        List<OrderDetail> orderDetailList = new ArrayList<>();
-        for (Cart cart : userCartProducts) {
-            OrderDetail orderDetail = new OrderDetail();
-            orderDetail.setOrderId(orderId);
-            orderDetail.setProductId(cart.getProductId());
-            orderDetail.setCount(cart.getCount());
-            orderDetail.setCost(productDao.getProductById(cart.getProductId()).getCost());
-            orderDetailList.add(orderDetail);
+    private OrderDetail createOrderDetail(Cart cart, long orderId) {
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setOrderId(orderId);
+        orderDetail.setProductId(cart.getProductId());
+        orderDetail.setCount(cart.getCount());
+        orderDetail.setCost(productDao.getProductById(cart.getProductId()).getCost());
+        return orderDetail;
+    }
+
+    private boolean isCartEmpty(HttpServletRequest request, HttpServletResponse response, List<Cart> userCartProducts) throws ServletException, IOException {
+        if (userCartProducts == null || userCartProducts.size() == 0) {
+            request.setAttribute(ORDER_COMPLETION, NEGATIVE);
+            request.getRequestDispatcher(PROFILE_PAGE).forward(request, response);
+            return false;
         }
+        return true;
+    }
 
+    private boolean enoughProducts(HttpServletRequest request, HttpServletResponse response, List<Cart> userCartProducts) throws ServletException, IOException {
+        for (Cart cartProduct: userCartProducts) {
+            if (cartProduct.getCount() > productDao.getProductCount(cartProduct.getProductId())) {
+                request.setAttribute(ORDER_COMPLETION, NEGATIVE);
+                request.getRequestDispatcher(PROFILE_PAGE).forward(request, response);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void setAttributes(HttpServletRequest request) {
+        HttpSession session = request.getSession(true);
+        session.setAttribute(USER_CART, null);
+        session.setAttribute(CART_SUM, null);
+        session.setAttribute(USER_ORDERS, orderDao.getUserOrders(receiveUser(request).getId()));
+        request.setAttribute(ORDER_COMPLETION, POSITIVE);
+    }
+
+    private void makeOrder(List<OrderDetail> orderDetailList, User user) {
         orderDao.addOrderDetail(orderDetailList);
         orderDao.reduceCountOfProduct(orderDetailList);
         cartDao.deleteAllUserProducts(user.getId());
+    }
 
-        session.setAttribute(USER_CART, null);
-        session.setAttribute(CART_SUM, null);
-        session.setAttribute(USER_ORDERS, orderDao.getUserOrders(user.getId()));
-        request.setAttribute(ORDER_COMPLETION, POSITIVE);
-
+    @Override
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        List<Cart> userCartProducts = cartDao.getCartProducts(receiveUser(request).getId());
+        List<OrderDetail> orderDetailList = new ArrayList<>();
+        if (!isCartEmpty(request, response, userCartProducts) || !enoughProducts(request, response, userCartProducts)) {
+            return;
+        }
+        for (Cart cart : userCartProducts) {
+            orderDetailList.add(createOrderDetail(cart, receiveOrderId(request)));
+        }
+        makeOrder(orderDetailList, receiveUser(request));
+        setAttributes(request);
         request.getRequestDispatcher(PROFILE_PAGE).forward(request, response);
     }
 }

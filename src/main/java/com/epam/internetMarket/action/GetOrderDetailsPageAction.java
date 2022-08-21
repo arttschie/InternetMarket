@@ -9,8 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.List;
 
 import static com.epam.internetMarket.util.constants.PageConstants.ORDER_DETAILS_PAGE;
@@ -20,15 +18,16 @@ import static com.epam.internetMarket.util.constants.ParameterConstants.*;
 public class GetOrderDetailsPageAction implements Action {
     private final OrderDao orderDao = new OrderDaoImpl();
 
-    @Override
-    public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException, SQLException {
-        HttpSession session = request.getSession(true);
+    private long receiveOrderId(HttpServletRequest request) {
         long orderId = Long.parseLong(request.getParameter(ORDER_ID));
+        return orderId;
+    }
 
-        List<OrderDetail> orderDetailsList = orderDao.getOrderDetails(orderId);
-
+    @Override
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(true);
+        List<OrderDetail> orderDetailsList = orderDao.getOrderDetails(receiveOrderId(request));
         session.setAttribute(ORDER_DETAIL_LIST, orderDetailsList);
-
         request.getRequestDispatcher(ORDER_DETAILS_PAGE).forward(request, response);
     }
 }
