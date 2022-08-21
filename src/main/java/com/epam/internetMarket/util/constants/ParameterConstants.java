@@ -68,4 +68,5 @@ public class ParameterConstants {
     public static final String ORDER_STATUS_UPDATING = "successOrderUpdate";
     public static final int MINIMUM_NUMBER_ASCII_VALUE = 48;
     public static final int MAXIMUM_NUMBER_ASCII_VALUE = 57;
+    public static final String UTF_8 = "UTF-8";
 }

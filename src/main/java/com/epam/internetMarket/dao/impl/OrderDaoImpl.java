@@ -64,7 +64,7 @@ public class OrderDaoImpl implements OrderDao {
             preparedStatement.setDate(5, order.getDateFinish());
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                id = rs.getLong("id");
+                id = rs.getLong(ID);
             }
         } catch (SQLException e) {
             log.error(e);
@@ -155,7 +155,7 @@ public class OrderDaoImpl implements OrderDao {
             preparedStatement.setLong(2, localeId);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                statusName = rs.getString("name");
+                statusName = rs.getString(NAME);
             }
         } catch (SQLException e) {
             log.error(e);
