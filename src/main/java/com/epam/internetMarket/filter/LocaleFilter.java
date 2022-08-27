@@ -15,34 +15,53 @@ import static com.epam.internetMarket.util.constants.ParameterConstants.*;
 public class LocaleFilter implements Filter {
     private final LocaleDao localeDao = new LocaleDaoImpl();
 
+    private Long receiveLocaleId(HttpSession session) {
+        Long localeId = (Long) session.getAttribute(WEB_LOCALE_ID);
+        return localeId;
+    }
+
+    private String receiveLocaleName(HttpSession session) {
+        String localeName = (String) session.getAttribute(WEB_LOCALE_NAME);
+        return localeName;
+    }
+
+    private Locale createLocale(HttpSession session) {
+        Locale locale = new Locale();
+        locale.setId(receiveLocaleId(session));
+        locale.setName(receiveLocaleName(session));
+        return locale;
+    }
+
+    private void setAllLocalesAttribute(HttpSession session) {
+        if (session.getAttribute(ALL_LOCALES) == null) {
+            session.setAttribute(ALL_LOCALES, localeDao.getAllLocales());
+        }
+    }
+
+    private void setRussianLocaleAttribute(HttpSession session, Locale locale) {
+        session.setAttribute(WEB_LOCALE, locale);
+        session.setAttribute(WEB_LOCALE_ID, RU_LOCALE_ID);
+        session.setAttribute(WEB_LOCALE_NAME, RUSSIAN);
+    }
+
+    private void setEnglishLocaleAttribute(HttpSession session, Locale locale) {
+        session.setAttribute(WEB_LOCALE, locale);
+        session.setAttribute(WEB_LOCALE_ID, EN_LOCALE_ID);
+        session.setAttribute(WEB_LOCALE_NAME, ENGLISH);
+    }
+
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpSession session = request.getSession(true);
-
-        if (session.getAttribute(ALL_LOCALES) == null) {
-            session.setAttribute(ALL_LOCALES, localeDao.getAllLocales());
-        }
-        Locale locale = new Locale();
-
-        Long locale_id = (Long) session.getAttribute(WEB_LOCALE_ID);
-        String locale_name = (String) session.getAttribute(WEB_LOCALE_NAME);
-
-        locale.setId((locale_id));
-        locale.setName(locale_name);
-
-        if (locale_id == null || locale_name == null) {
-            session.setAttribute(WEB_LOCALE, locale);
-            session.setAttribute(WEB_LOCALE_ID, RU_LOCALE_ID);
-            session.setAttribute(WEB_LOCALE_NAME, RUSSIAN);
-        } else if (locale_id.equals(EN_LOCALE_ID) && locale_name.equals(ENGLISH)) {
-            session.setAttribute(WEB_LOCALE, locale);
-            session.setAttribute(WEB_LOCALE_ID, EN_LOCALE_ID);
-            session.setAttribute(WEB_LOCALE_NAME, ENGLISH);
-        } else if (locale_id.equals(RU_LOCALE_ID) && locale_name.equals(RUSSIAN)) {
-            session.setAttribute(WEB_LOCALE, locale);
-            session.setAttribute(WEB_LOCALE_ID, RU_LOCALE_ID);
-            session.setAttribute(WEB_LOCALE_NAME, RUSSIAN);
+        setAllLocalesAttribute(session);
+        Locale locale = createLocale(session);
+        if (locale.getId() == null || locale.getName() == null) {
+            setRussianLocaleAttribute(session, locale);
+        } else if (locale.getId().equals(EN_LOCALE_ID) && locale.getName().equals(ENGLISH)) {
+            setEnglishLocaleAttribute(session, locale);
+        } else if (locale.getId().equals(RU_LOCALE_ID) && locale.getName().equals(RUSSIAN)) {
+            setRussianLocaleAttribute(session, locale);
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }
