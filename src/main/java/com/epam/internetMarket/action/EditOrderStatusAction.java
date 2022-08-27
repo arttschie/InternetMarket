@@ -12,7 +12,7 @@ import static com.epam.internetMarket.util.constants.PageConstants.EDIT_USERS_PA
 import static com.epam.internetMarket.util.constants.ParameterConstants.*;
 
 public class EditOrderStatusAction implements Action{
-    OrderDao orderDao = new OrderDaoImpl();
+    private OrderDao orderDao = new OrderDaoImpl();
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
